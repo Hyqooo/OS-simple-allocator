@@ -1,2 +1,0 @@
-- Realloc memory: make sure that everything works when block has enough memory for two blocks
-- Free memory: Go through list of block and check all their sizes, and check if free blocks merges
