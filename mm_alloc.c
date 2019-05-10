@@ -8,6 +8,8 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <stdbool.h>
+// debug
+#include <stdio.h>
 
 typedef struct a_block{
   // metadata
@@ -18,7 +20,7 @@ typedef struct a_block{
 
   // Allocated memory
   // So, we use char because it always has size of 1 byte, and we can easily allocate needed amount of memory
-  char memory[];
+  char memory[0];
 }allocated_block_t;
 
 // List of all allocated memory
@@ -29,8 +31,8 @@ void *mm_malloc(size_t size) {
   if (size == 0)
     return NULL;
 
-  // It could be written better
-  // but until I don't understand how to write it better
+  // It is could be written better
+  // but until I don't understand how allocation works 
   // I can't do anything 
   if (allocated_memory == NULL){
     allocated_block_t *new_block = sbrk(sizeof(allocated_block_t) + size);
@@ -121,6 +123,6 @@ void print_list(int number){
   printf("Try #%d ****\n", number);
 
   for(cur = allocated_memory, i = 0; cur != NULL; cur = cur->next, i++){
-    printf("Block #%d - %p\n", i, cur);
+    printf("Block #%d - %p - Is free: %d - size: %ld - size w/ meta: %ld\n", i, cur, cur->free, cur->size, cur->size + sizeof(allocated_block_t));
   }
 }

@@ -48,29 +48,27 @@ int main(){
   
   int *data = mm_malloc(sizeof(int));
   print_list(1);
+  printf("data addr: %p\n", data);
   int *data2 = mm_malloc(sizeof(int));
   print_list(2);
   int *data3 = mm_malloc(sizeof(int));
   print_list(3);
-  print_list(4);
 
   mm_free(data2);
-  print_list(5);
+  print_list(4);
   mm_free(data3);
-  print_list(6);
+  print_list(5);
 
   char *var = mm_malloc(sizeof(char) * 12);
   var = "Hello, world";
-  print_list(7);
-  printf("%s\n", var);
+  printf("var addr: %p\n", var);
+  print_list(6);
 
   mm_free(data);
-  print_list(8);
-  mm_free(data2);
-  // here fram fault
-  print_list(9);
-  mm_free(var);
-  print_list(10);
+  print_list(7);
+  // bug with literals
+//  mm_free(var);
+//  print_list(8);
 
   printf("Successfull\n");
   return 0;

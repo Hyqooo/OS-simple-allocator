@@ -30,3 +30,7 @@
 
 7. It's interesting seems that OS doesn't check boundaries of the brk.
   - Actually it's not true, this is result of undefined behaviour.
+
+8. There's a bug when we use litarals they have different address of memory and 
+we can't easily free this memory because we don't know where the header is. 
+I think we need go through all the list and find memory address that contains pointer to this literal

@@ -1,3 +1,10 @@
+# Todo files
+thoughts
+test_cases
+
+# Linux executables with .x extension
+*.x
+
 # Swap files
 .*.sw*
 
