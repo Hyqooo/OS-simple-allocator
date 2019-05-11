@@ -43,12 +43,10 @@ void load_alloc_functions() {
     }
 }
 
-int main(){
-  load_alloc_functions();
-  
+
+void alloc_and_free(){
   int *data = mm_malloc(sizeof(int));
   print_list(1);
-  printf("data addr: %p\n", data);
   int *data2 = mm_malloc(sizeof(int));
   print_list(2);
   int *data3 = mm_malloc(sizeof(int));
@@ -60,15 +58,32 @@ int main(){
   print_list(5);
 
   char *var = mm_malloc(sizeof(char) * 12);
-  var = "Hello, world";
-  printf("var addr: %p\n", var);
   print_list(6);
 
   mm_free(data);
   print_list(7);
-  // bug with literals
-//  mm_free(var);
-//  print_list(8);
+  mm_free(var);
+  print_list(8);
+}
+
+
+// allocate block of certain size, free it, allocate block of equal or less size
+// BUG: it is not working correctly
+void test_2(){
+  int *data = (int*)mm_malloc(sizeof(int) * 20);
+  print_list(1);
+
+  mm_free(data);
+
+  int *data2 = (int*)mm_malloc(sizeof(int) * 5);
+  print_list(2);
+}
+
+int main(){
+  load_alloc_functions();
+  
+  alloc_and_free();
+ //  test_2();
 
   printf("Successfull\n");
   return 0;

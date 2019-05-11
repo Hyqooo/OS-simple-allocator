@@ -11,6 +11,7 @@
 // debug
 #include <stdio.h>
 
+
 typedef struct a_block{
   // metadata
   struct a_block *prev;
@@ -23,60 +24,60 @@ typedef struct a_block{
   char memory[0];
 }allocated_block_t;
 
+#define META_SIZE sizeof(allocated_block_t)
+
 // List of all allocated memory
 allocated_block_t *allocated_memory = NULL;
+allocated_block_t *tail_of_list = NULL;
 
-// NOTE: I do not zero-fill newly allocated memory
+void add_to_list(allocated_block_t *prev, allocated_block_t *new_block) {
+  new_block->prev = prev;
+  if (prev != NULL){
+    new_block->next = prev->next;
+    prev->next = new_block;
+  }
+  tail_of_list = new_block;
+  if (allocated_memory == NULL)
+    allocated_memory = tail_of_list;
+}
+
+void form_new_block(allocated_block_t *block, size_t size, bool is_free) {
+  block->size = size;
+  block->free = is_free;
+} 
+
 void *mm_malloc(size_t size) {
-  if (size == 0)
-    return NULL;
+  if (size == 0) return NULL;
 
-  // It is could be written better
-  // but until I don't understand how allocation works 
-  // I can't do anything 
-  if (allocated_memory == NULL){
-    allocated_block_t *new_block = sbrk(sizeof(allocated_block_t) + size);
-    if (new_block == (void *)-1) return NULL;
-    new_block->size = size;
-    new_block->free = false;
-    allocated_memory = new_block;
-    return allocated_memory->memory;
-  }
-  allocated_block_t *cur;
-
-  // go through allocated memory and try to find first block that fits requested data
-  for (cur = allocated_memory; cur->next != NULL; cur = cur->next){
-    if (cur->free && cur->size >= size){
+  for (allocated_block_t *cur = allocated_memory; cur != NULL; cur = cur->next) {
+    if (cur->free && cur->size >= size) {
       size_t old_size = cur->size;
-      cur->free = false;
-      cur->size = size;
-      
-      // if there's space for another metadata header
-      if ((old_size - cur->size) >= sizeof(allocated_block_t)){
-        allocated_block_t *new_block = cur + cur->size;
-        new_block->size = old_size - cur->size;
-        new_block->free = false;
-        new_block->prev = cur;
-        new_block->next = cur->next;
-        cur->next = new_block;
+      form_new_block(cur, size, false);
+
+      // there's space for another header and data
+      if ((old_size - cur->size) > META_SIZE) {
+        allocated_block_t *new_block = cur + META_SIZE + cur->size;
+        form_new_block(new_block, old_size - cur->size - META_SIZE, true);
+        add_to_list(cur, new_block);
       }
-      return cur->memory; 
-    }  
+      return cur->memory;
+    }
   }
-
-  allocated_block_t *new_block = sbrk(sizeof(allocated_block_t) + size);
-  if (new_block == (void *)-1) return NULL;
-  new_block->size = size;
-  new_block->prev = cur;
-  cur->next = new_block;
-  new_block->next = NULL;
-  new_block->free = false;
-
+  
+  // haven't found free block
+  allocated_block_t *new_block = sbrk(META_SIZE + size);
+  form_new_block(new_block, size, false);
+  add_to_list(tail_of_list, new_block);
   return new_block->memory;
 }
 
 void *mm_realloc(void *ptr, size_t size) {
-  /* YOUR CODE HERE */
+  
+  // first we need to free referenced block
+  // then we need to mm_alloc of specified size
+    
+  
+  
   return NULL;
 }
 
