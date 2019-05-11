@@ -68,7 +68,6 @@ void alloc_and_free(){
 
 
 // allocate block of certain size, free it, allocate block of equal or less size
-// BUG: it is not working correctly
 void test_2(){
   int *data = (int*)mm_malloc(sizeof(int) * 20);
   print_list(1);
@@ -79,11 +78,33 @@ void test_2(){
   print_list(2);
 }
 
+// realloc checking
+void test_3() {
+  char *string_1 = (char*)mm_malloc(sizeof(char) * 10);
+  scanf("%s", string_1);
+  printf("%s\n", string_1);
+  print_list(1);
+  char *string_2 = (char*)mm_realloc(string_1, sizeof(char) * 15);
+  printf("%s\n", string_2);
+  print_list(2);
+  char *string_3 = (char*)mm_realloc(string_2, sizeof(char) * 7);
+  printf("%s\n", string_3);
+  print_list(3);
+
+  char *string_4 = (char*)mm_malloc(sizeof(char) * 20);
+  print_list(4);
+  mm_free(string_4);
+  print_list(5);
+  mm_free(string_3);
+  print_list(6);
+}
+
 int main(){
   load_alloc_functions();
   
-  alloc_and_free();
- //  test_2();
+//  alloc_and_free();
+//  test_2();
+  test_3();
 
   printf("Successfull\n");
   return 0;

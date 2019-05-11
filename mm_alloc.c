@@ -8,6 +8,7 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <stdbool.h>
+#include <string.h>
 // debug
 #include <stdio.h>
 
@@ -72,13 +73,25 @@ void *mm_malloc(size_t size) {
 }
 
 void *mm_realloc(void *ptr, size_t size) {
+  if (size == 0){
+    mm_free(ptr);
+    return NULL;
+  }
+
+  if (ptr == NULL)
+    return mm_malloc(size);
   
-  // first we need to free referenced block
-  // then we need to mm_alloc of specified size
-    
-  
-  
-  return NULL;
+  allocated_block_t *block = ptr - META_SIZE;
+  block->free = true;
+
+  void *new_mem = mm_malloc(size);
+  if (new_mem == (void *) -1) return NULL;
+
+  size_t new_size = size < block->size ? size : block->size;
+
+  memcpy(new_mem, block->memory, new_size);
+   
+  return new_mem;
 }
 
 void merge(allocated_block_t *block){
